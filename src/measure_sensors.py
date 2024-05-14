@@ -84,33 +84,33 @@ def serve_data():
 				
 		# write value of fermentation chamber 1 temperature
 		if fermentation_chamber_1_installed:
-			string = "FermentationChamberTemp1:" + str(ferment_chamber_temp_sensor_1)
+			string = "FermentationChamberTemp1_C," + str(ferment_chamber_temp_sensor_1)
 		else:
-			string = "FermentationChamberTemp1:" + "NotInstalled" 
+			string = "FermentationChamberTemp1_C," + "NotInstalled" 
 			
 		# write value of fermentation chamber 2 temperature		
 		if fermentation_chamber_2_installed:
-			string += ",FermentationChamberTemp2:" + str(ferment_chamber_temp_sensor_2)
+			string += ",FermentationChamberTemp2_C," + str(ferment_chamber_temp_sensor_2)
 		else:
-			 string += ",FermentationChamberTemp2:" + "NotInstalled"
+			 string += ",FermentationChamberTemp2_C," + "NotInstalled"
 			 
 		# write value of kegerator temperature		
 		if kegerator_temp_sensor_installed:
-			string += ",KegeratorTemp:" + str(kegerator_temp_sensor)
+			string += ",KegeratorTemp_C," + str(kegerator_temp_sensor)
 		else:
-			 string += ",KegeratorTemp:" + "NotInstalled"
+			 string += ",KegeratorTemp_C," + "NotInstalled"
 			 
 		# write value of keg fill sensor 1
 		if keg_fill_sensor_1_installed:
-			string += ",KegWeightSensor1:" + str(sensor_1_pct)
+			string += ",KegWeightSensor1_PCT," + str(sensor_1_pct)
 		else:
-			 string += ",KegWeightSensor1:" + "NotInstalled"
+			 string += ",KegWeightSensor1_PCT," + "NotInstalled"
 			 
 		# write value of keg fill sensor 2
 		if keg_fill_sensor_2_installed:
-			string += ",KegWeightSensor2:" + str(sensor_2_pct)
+			string += ",KegWeightSensor2_PCT," + str(sensor_2_pct)
 		else:
-			 string += ",KegWeightSensor2:" + "NotInstalled"
+			 string += ",KegWeightSensor2_PCT," + "NotInstalled"
 
 		client_socket.send(str.encode(string))
 		
@@ -234,7 +234,7 @@ try:
 	thread_measure_kegs.start()
 	
 	### FIX THIS LATER!!!! (not a good implementation)
-	time.sleep(5)
+	#time.sleep(5)
 	
 	
 	thread_serve_data = threading.Thread(target=serve_data)
@@ -244,8 +244,14 @@ try:
 	thread_measure_temps.start()
 	
 	thread_serve_data.join()
+	thread_measure_temps.join()
+	thread_measure_kegs.join()
 	
 	
 except KeyboardInterrupt:
 	print('Script cancelled by user!')
+	terminate_thread = True
 	server_socket.close()
+	time.sleep(2)
+	GPIO.cleanup()
+	
