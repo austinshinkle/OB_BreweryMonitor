@@ -10,6 +10,9 @@ Each fermentation chamber supports a 40L Spiedel Fermenter and has a temperature
 ### Kegerator
 The kegerator fits two corny kegs with picnic taps. The kegerator has an interior temperature sensor and a load cell under each keg connected to the RPI Zero 2 W to measure the amount of beer remaining in each keg.
 
+### Monitor (RPI Zero 2 W)
+The monitor is implemented in a Raspberry Pi and hosts a socket that collects the data and serializes it into a stream which provides the sensor data. The visualization must be completed separately by connecting to the socket provided by the monitor.
+
 ## Schematic
 ![Schematic](BreweryMonitor.drawio.svg)
 
