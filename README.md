@@ -8,4 +8,6 @@ Each fermentation chamber supports a 40L Spiedel Fermenter and has a temperature
 ## Kegerator
 The kegerator fits two corny kegs with picnic taps. The kegerator has an interior temperature sensor and a load cell under each keg connected to the RPI Zero 2 W to measure the amount of beer remaining in each keg.
 
+![Schematic](BreweryMonitor.drawio.svg)
+
 ![OB](OstentatiousBrewingRobot.jpeg)
