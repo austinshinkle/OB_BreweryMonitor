@@ -14,4 +14,4 @@ The kegerator fits two corny kegs with picnic taps. The kegerator has an interio
 The monitor is implemented in a Raspberry Pi Zero 2 W and hosts a socket that collects the data and serializes it into a stream which provides the sensor data. The visualization must be completed separately by connecting to the socket provided by the monitor.
 
 ## Schematic
-![Schematic](BreweryMonitor.drawio.svg)
+![Schematic](/documentation/BreweryMonitor.drawio.svg)
