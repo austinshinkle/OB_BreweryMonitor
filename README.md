@@ -1,4 +1,4 @@
-[[/Ostentatious Brewing - Robot.jpeg|Ostentatious Brewing Robot]]
+[Ostentatious Brewing - Robot.jpeg|Ostentatious Brewing Robot]
 
 # OB_BreweryMonitor
 ## About
