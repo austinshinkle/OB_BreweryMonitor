@@ -1,4 +1,4 @@
-![OB](/Ostentatious Brewing - Robot.jpeg)
+![OB](/assets/images/Ostentatious Brewing - Robot.jpeg)
 
 # OB_BreweryMonitor
 ## About
