@@ -1,3 +1,5 @@
+[[/Ostentatious Brewing - Robot.jpeg|Ostentatious Brewing Robot]]
+
 # OB_BreweryMonitor
 ## About
 This repository contains python scripts for Raspberry Pi (target HW is Pi Zero 2 W), which supports my homebrewing setup. The overall setup consists of two fermentation chambers based on chest freezers with temperature controllers and a kegerator that supports two corny kegs built from a minifridge.
