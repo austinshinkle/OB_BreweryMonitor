@@ -16,4 +16,4 @@ The monitor is implemented in a Raspberry Pi Zero 2 W and hosts a socket that co
 ## Schematic
 ![Schematic](BreweryMonitor.drawio.svg)
 
-![OB](OstentatiousBrewingRobot.jpeg)
+![OB](/media/OstentatiousBrewingRobot.jpeg)
