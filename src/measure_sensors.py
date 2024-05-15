@@ -1,6 +1,7 @@
 # system imports
 import time
 import socket
+import json
 import threading
 from DS18B20classfile import DS18B20
 from array import array
@@ -21,7 +22,7 @@ SAMPLES = 5
 
 # calibration data for sensor 1
 SENSOR_1_OFFSET = -519856.2 #temp value
-SENSOR_1_SCALE = 1/1000 #temp value
+SENSOR_1_SCALE = 1/1000 #temp valuetree/main
 
 # calibration data for sensor 2
 SENSOR_2_OFFSET = -640729.2 #temp value
@@ -81,39 +82,47 @@ def serve_data():
 		client_socket, addr = server_socket.accept()
 		if DEBUG:
 				print("Got connection from", addr)
+		
+		# create sensor dictionary
+		sensor_dictionary = {
+			"FermentationChamberTemp1_C":0,
+			"FermentationChamberTemp2_C":0,
+			"KegeratorTemp_C":0,
+			"KegWeightSensor1_PCT":0,
+			"KegWeightSensor2_PCT":0
+		}
 				
 		# write value of fermentation chamber 1 temperature
 		if fermentation_chamber_1_installed:
-			string = "FermentationChamberTemp1_C," + str(ferment_chamber_temp_sensor_1)
+			sensor_dictionary["FermentationChamberTemp1_C"] = ferment_chamber_temp_sensor_1
 		else:
-			string = "FermentationChamberTemp1_C," + "NotInstalled" 
+			sensor_dictionary["FermentationChamberTemp1_C"] = "NotInstalled"
 			
 		# write value of fermentation chamber 2 temperature		
-		if fermentation_chamber_2_installed:
-			string += ",FermentationChamberTemp2_C," + str(ferment_chamber_temp_sensor_2)
+		if fermentation_chamber_2_installed:		
+			sensor_dictionary["FermentationChamberTemp2_C"] = ferment_chamber_temp_sensor_2
 		else:
-			 string += ",FermentationChamberTemp2_C," + "NotInstalled"
+			sensor_dictionary["FermentationChamberTemp2_C"] = "NotInstalled"
 			 
 		# write value of kegerator temperature		
 		if kegerator_temp_sensor_installed:
-			string += ",KegeratorTemp_C," + str(kegerator_temp_sensor)
+			sensor_dictionary["KegeratorTemp_C"] = kegerator_temp_sensor
 		else:
-			 string += ",KegeratorTemp_C," + "NotInstalled"
+			sensor_dictionary["KegeratorTemp_C"] = "NotInstalled"
 			 
 		# write value of keg fill sensor 1
 		if keg_fill_sensor_1_installed:
-			string += ",KegWeightSensor1_PCT," + str(sensor_1_pct)
+			sensor_dictionary["KegWeightSensor1_PCT"] = sensor_1_pct
 		else:
-			 string += ",KegWeightSensor1_PCT," + "NotInstalled"
+			sensor_dictionary["KegWeightSensor1_PCT"] = "NotInstalled"
 			 
 		# write value of keg fill sensor 2
 		if keg_fill_sensor_2_installed:
-			string += ",KegWeightSensor2_PCT," + str(sensor_2_pct)
+			sensor_dictionary["KegWeightSensor2_PCT"] = sensor_2_pct
 		else:
-			 string += ",KegWeightSensor2_PCT," + "NotInstalled"
+			sensor_dictionary["KegWeightSensor2_PCT"] = "NotInstalled"
 
-		client_socket.send(str.encode(string))
-		
+		client_socket.send(str.encode(json.dumps(sensor_dictionary)))
 		client_socket.close()
 		
 		# Wait for keyboard input to terminate the thread
