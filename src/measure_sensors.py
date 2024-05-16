@@ -87,7 +87,7 @@ def serve_data():
 		sensor_dictionary = {
 			"FermentationChamberTemp1_F":0,
 			"FermentationChamberTemp2_F":0,
-			"KegeratorTemp_C":0,
+			"KegeratorTemp_F":0,
 			"KegWeightSensor1_PCT":0,
 			"KegWeightSensor2_PCT":0
 		}
