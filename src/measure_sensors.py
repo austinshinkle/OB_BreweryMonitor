@@ -85,8 +85,8 @@ def serve_data():
 		
 		# create sensor dictionary
 		sensor_dictionary = {
-			"FermentationChamberTemp1_C":0,
-			"FermentationChamberTemp2_C":0,
+			"FermentationChamberTemp1_F":0,
+			"FermentationChamberTemp2_F":0,
 			"KegeratorTemp_C":0,
 			"KegWeightSensor1_PCT":0,
 			"KegWeightSensor2_PCT":0
@@ -94,21 +94,21 @@ def serve_data():
 				
 		# write value of fermentation chamber 1 temperature
 		if fermentation_chamber_1_installed:
-			sensor_dictionary["FermentationChamberTemp1_C"] = ferment_chamber_temp_sensor_1
+			sensor_dictionary["FermentationChamberTemp1_F"] = ferment_chamber_temp_sensor_1
 		else:
-			sensor_dictionary["FermentationChamberTemp1_C"] = "NotInstalled"
+			sensor_dictionary["FermentationChamberTemp1_F"] = "NotInstalled"
 			
 		# write value of fermentation chamber 2 temperature		
 		if fermentation_chamber_2_installed:		
-			sensor_dictionary["FermentationChamberTemp2_C"] = ferment_chamber_temp_sensor_2
+			sensor_dictionary["FermentationChamberTemp2_F"] = ferment_chamber_temp_sensor_2
 		else:
-			sensor_dictionary["FermentationChamberTemp2_C"] = "NotInstalled"
+			sensor_dictionary["FermentationChamberTemp2_F"] = "NotInstalled"
 			 
 		# write value of kegerator temperature		
 		if kegerator_temp_sensor_installed:
-			sensor_dictionary["KegeratorTemp_C"] = kegerator_temp_sensor
+			sensor_dictionary["KegeratorTemp_F"] = kegerator_temp_sensor
 		else:
-			sensor_dictionary["KegeratorTemp_C"] = "NotInstalled"
+			sensor_dictionary["KegeratorTemp_F"] = "NotInstalled"
 			 
 		# write value of keg fill sensor 1
 		if keg_fill_sensor_1_installed:
@@ -148,7 +148,7 @@ def measure_temps():
 		# get all devices temperatures
 		for temp_cnt in range(temp_device_count):
 			
-			device_temps.insert(temp_cnt,round(temp_devices.tempC(temp_cnt),2))
+			device_temps.insert(temp_cnt,round((9/5 * temp_devices.tempC(temp_cnt))+32,1))
 			if DEBUG:
 				print(device_temps[temp_cnt])
 
