@@ -13,5 +13,7 @@ nohup python3 measure_sensors.py
 
 ## Stop a process running in the background
 Get PID and kill that PID
-```ps -ef | grep python3
-kill -9 <PID>```
+```
+ps -ef | grep python3
+kill -9 <PID>
+```
