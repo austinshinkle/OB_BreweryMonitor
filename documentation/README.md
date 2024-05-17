@@ -9,7 +9,9 @@ To enable the one-wire interface you need to add the following line to /boot/fir
 dtoverlay=w1-gpio
 
 ## Start a process via SSH and persist after closing the session
+```
 nohup python3 measure_sensors.py
+```
 
 ## Stop a process running in the background
 Get PID and kill that PID
