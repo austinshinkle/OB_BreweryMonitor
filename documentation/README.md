@@ -12,5 +12,5 @@ dtoverlay=w1-gpio
 nohup python3 measure_sensors.py
 
 ## Stop a process running in the background
-Get PID via ps -ef | grep python3
-Terminate PID via kill -9 <PID>
+### Get PID via ps -ef | grep python3
+### Terminate PID via kill -9 <PID>
