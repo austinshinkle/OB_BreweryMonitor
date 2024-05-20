@@ -83,44 +83,34 @@ def serve_data():
 		if DEBUG:
 				print("Got connection from", addr)
 		
-		# create sensor dictionary
+		# create sensor dictionary with default values
 		sensor_dictionary = {
-			"FermentationChamberTemp1_F":0,
-			"FermentationChamberTemp2_F":0,
-			"KegeratorTemp_F":0,
-			"KegWeightSensor1_PCT":0,
-			"KegWeightSensor2_PCT":0
+			"FermentationChamberTemp1_F":"NoData",
+			"FermentationChamberTemp2_F":"NoData",
+			"KegeratorTemp_F":"NoData",
+			"KegWeightSensor1_PCT":"NoData",
+			"KegWeightSensor2_PCT":"NoData"
 		}
 				
 		# write value of fermentation chamber 1 temperature
 		if fermentation_chamber_1_installed:
 			sensor_dictionary["FermentationChamberTemp1_F"] = ferment_chamber_temp_sensor_1
-		else:
-			sensor_dictionary["FermentationChamberTemp1_F"] = "NotInstalled"
 			
 		# write value of fermentation chamber 2 temperature		
 		if fermentation_chamber_2_installed:		
 			sensor_dictionary["FermentationChamberTemp2_F"] = ferment_chamber_temp_sensor_2
-		else:
-			sensor_dictionary["FermentationChamberTemp2_F"] = "NotInstalled"
 			 
 		# write value of kegerator temperature		
 		if kegerator_temp_sensor_installed:
 			sensor_dictionary["KegeratorTemp_F"] = kegerator_temp_sensor
-		else:
-			sensor_dictionary["KegeratorTemp_F"] = "NotInstalled"
 			 
 		# write value of keg fill sensor 1
 		if keg_fill_sensor_1_installed:
 			sensor_dictionary["KegWeightSensor1_PCT"] = sensor_1_pct
-		else:
-			sensor_dictionary["KegWeightSensor1_PCT"] = "NotInstalled"
 			 
 		# write value of keg fill sensor 2
 		if keg_fill_sensor_2_installed:
 			sensor_dictionary["KegWeightSensor2_PCT"] = sensor_2_pct
-		else:
-			sensor_dictionary["KegWeightSensor2_PCT"] = "NotInstalled"
 
 		client_socket.send(str.encode(json.dumps(sensor_dictionary)))
 		client_socket.close()
@@ -216,8 +206,7 @@ def measure_kegs():
 
 # main program 
 try:
-	
-		
+			
 	# channel A for amplifier board @ 128 gain for maximum signal swing
 	hx711 = HX711(
 		dout_pin=5,
@@ -241,17 +230,16 @@ try:
 	# start the thread to measure the kegs
 	thread_measure_kegs = threading.Thread(target=measure_kegs)
 	thread_measure_kegs.start()
-	
-	### FIX THIS LATER!!!! (not a good implementation)
-	#time.sleep(5)
-	
-	
+
+	# start the thread to measure the temperatures
+	thread_measure_temps = threading.Thread(target=measure_temps)
+	thread_measure_temps.start()
+		
+	# start the thread to serve the data
 	thread_serve_data = threading.Thread(target=serve_data)
 	thread_serve_data.start()
 	
-	thread_measure_temps = threading.Thread(target=measure_temps)
-	thread_measure_temps.start()
-	
+	# set up the threads to allow them to finish on script termination
 	thread_serve_data.join()
 	thread_measure_temps.join()
 	thread_measure_kegs.join()
