@@ -20,3 +20,7 @@ Get PID and kill that PID
 ps -ef | grep python3
 kill -9 <PID>
 ```
+
+
+## Seek Lite BT-LE MAC Address
+01:B6:EC:D9:CD:62 SEEK-LITE
