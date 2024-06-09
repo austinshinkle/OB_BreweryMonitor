@@ -1,4 +1,5 @@
 # Documentation Links
+This is a random collection of links and useful documentation collected while developing the application
 
 |Topic|Link|
 |-----|----|
