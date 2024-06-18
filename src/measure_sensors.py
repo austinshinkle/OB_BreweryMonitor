@@ -22,13 +22,13 @@ SAMPLES = 5
 
 # calibration data for sensor 1
 SENSOR_1_OFFSET = -519856.2 #temp value
-SENSOR_1_SCALE = -1/1000 #temp value
+SENSOR_1_SCALE = 1/1000 #temp value
 #SENSOR_1_OFFSET = 6748575 #temp value
 #SENSOR_1_SCALE = 1/337.248 #temp value  
 
 # calibration data for sensor 2
 SENSOR_2_OFFSET = -640729.2 #temp value
-SENSOR_2_SCALE = -1/600 #temp value
+SENSOR_2_SCALE = 1/600 #temp value
 #SENSOR_2_OFFSET = 6748575 #temp value
 #SENSOR_2_SCALE = 1/337.248 #temp value  
 
