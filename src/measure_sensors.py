@@ -6,6 +6,8 @@ import threading
 from DS18B20classfile import DS18B20
 from array import array
 
+from paho.mqtt import client as mqtt_client
+
 # weight sensor imports
 from hx711 import HX711
 import RPi.GPIO as GPIO
@@ -32,18 +34,29 @@ SENSOR_2_SCALE = 1/600 #temp value
 #SENSOR_2_OFFSET = 6748575 #temp value
 #SENSOR_2_SCALE = 1/337.248 #temp value  
 
+# defines to determine how long to wait to write data
+GET_SENSOR_DATA_FREQ = 15 #55
+MQTT_WRITE_FREQ = 20 #60
 
+new_data_avail = False
 
 # socket settings
 host = "192.168.178.75"
 port = 12345
 
+# mqtt settings
+broker = 'homeassistant.local'
+port = 1883
+topic_inside_temp = "/home/inside/temperature"
+client_id = f'python-mqtt-543'
+username = 'mqtt-user'
+
 # start socket
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-server_socket.bind((host,port))
-server_socket.listen(5)
-print("Server listening on {}:{}".format(host,port))
+#server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+#server_socket.bind((host,port))
+#server_socket.listen(5)
+#print("Server listening on {}:{}".format(host,port))
 
 # debug level 0 = none; 1 = verbose
 DEBUG = 1
@@ -65,6 +78,65 @@ ferment_chamber_temp_sensor_2 = 0
 sensor_1_pct = 0
 sensor_2_pct = 0
 kegerator_temp_sensor = 0
+
+
+
+# function that creates and starts the mqtt connection
+def connect_mqtt():
+    def on_connect(client, userdata, flags, rc, properties):
+
+        if rc == 0:
+            print("Connected to MQTT Broker!")
+        else:
+            print("Failed to connect, return code %d\n", rc)
+    # Set Connecting Client ID
+    client = mqtt_client.Client(client_id=client_id, callback_api_version=mqtt_client.CallbackAPIVersion.VERSION2)
+
+    client.username_pw_set(username, username)
+    client.on_connect = on_connect
+    client.connect(broker, port)
+    return client
+
+
+# function that get the received
+# values from the global variables
+# and writes them to an MQTT broker
+# designed to be run in a thread 
+def write_data_to_mqtt():
+	
+	global terminate_thread
+	global keg_level_1
+	global keg_level_2
+	global fermentation_chamber_temp_1
+	global fermentation_chamber_temp_2
+	global kegerator_temp
+	global outside_temp
+	global outside_pressure
+	global outside_humidity
+	global new_data_avail
+
+	while not terminate_thread:
+		
+		print("Running Thread: write_data_to_mqtt")
+
+		try:
+
+			# only write data if it is not stale
+			if new_data_avail:
+
+				if DEBUG > 1:
+					print("Writing values to MQTT...")
+				
+				result = client.publish(topic_inside_temp, str(ferment_chamber_temp_sensor_1)) 
+		
+				# set the data to stale
+				new_data_avail = False
+
+		except ConnectionRefusedError:
+			print("Cannot connect to server...will try again later.")
+		
+		finally:
+			time.sleep(MQTT_WRITE_FREQ)
 
 def serve_data():
 	
@@ -129,6 +201,7 @@ def measure_temps():
 	global ferment_chamber_temp_sensor_2
 	global kegerator_temp_sensor
 	global temp_device_count
+	global new_data_avail
 	
 	while not terminate_thread:
 	
@@ -151,6 +224,8 @@ def measure_temps():
 			ferment_chamber_temp_sensor_2 = device_temps[1]
 			kegerator_temp_sensor = device_temps[2]
 			
+		new_data_avail = True
+
 		time.sleep(1)
 
 # function that measures the values of the weight sensors
@@ -161,6 +236,7 @@ def measure_kegs():
 	global terminate_thread
 	global sensor_1_pct
 	global sensor_2_pct
+	global new_data_avail
 	
 	while not terminate_thread:
 		
@@ -208,6 +284,8 @@ def measure_kegs():
 		# show the sensor values
 		print(f"{sensor_1_pct}%,{sensor_2_pct}%")
 
+		new_data_avail = True
+
 		time.sleep(.5)
 
 # main program 
@@ -233,6 +311,9 @@ try:
 	hx711.reset()   # Before we start, reset the HX711 (not obligate)	
 	hx711_2.reset()   # Before we start, reset the HX711 (not obligate)
 
+	# connect to the mqtt broker
+	client = connect_mqtt()
+
 	# start the thread to measure the kegs
 	thread_measure_kegs = threading.Thread(target=measure_kegs)
 	thread_measure_kegs.start()
@@ -242,11 +323,11 @@ try:
 	thread_measure_temps.start()
 		
 	# start the thread to serve the data
-	thread_serve_data = threading.Thread(target=serve_data)
-	thread_serve_data.start()
+	thread_write_data_to_mqtt = threading.Thread(target=write_data_to_mqtt)
+	thread_write_data_to_mqtt.start()
 	
 	# set up the threads to allow them to finish on script termination
-	thread_serve_data.join()
+	thread_write_data_to_mqtt.join()
 	thread_measure_temps.join()
 	thread_measure_kegs.join()
 	
@@ -254,7 +335,6 @@ try:
 except KeyboardInterrupt:
 	print('Script cancelled by user!')
 	terminate_thread = True
-	server_socket.close()
 	time.sleep(2)
 	GPIO.cleanup()
 	
