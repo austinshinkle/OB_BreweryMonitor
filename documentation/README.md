@@ -6,6 +6,7 @@ This is a random collection of links and useful documentation collected while de
 |RPI Pinout|https://www.raspberrypi.com/documentation/computers/raspberry-pi.html|
 |iBeacon|https://kvurd.com/blog/tilt-hydrometer-ibeacon-data-format/|
 |RPI Z2W Update Error|https://forums.raspberrypi.com/viewtopic.php?t=359240|
+|RPI Pico Firmware|https://micropython.org/download/RPI_PICO/|
 
 ## Enable 1 Wire Interface on RPI
 To enable the one-wire interface you need to add the following line to /boot/firmware/config.txt, before rebooting your Pi:
