@@ -11,69 +11,58 @@ from machine import Pin,I2C
 
 DEBUG = False
 
+# Topics to publish
 topic_inside_temp = "/home/inside/temperature"
 topic_outside_temp = "/home/outside/temperature"
 topic_outside_humidity = "/home/outside/humidity"
+
+# Freq to publish the topics
+PUBLISH_FREQ = 15
 
 # Wifi settings
 ssid = 'FRITZ!Box 6660 Cable LQ'
 password = '59231105902184626702'
 
+# RPI Pico network settings
 HOSTNAME = 'ashinkl-rpipw'
 PORT = 12345
-
-wlan = network.WLAN(network.STA_IF)
 
 # Configure LED on the board as an output
 led = Pin('LED', Pin.OUT)
 led.value(False)
 
+# Connect to WLAN 
+wlan = network.WLAN(network.STA_IF)
+network.hostname(HOSTNAME)
+wlan.active(True)
+led.value(True)
+wlan.connect(ssid, password)
+led.value(False)
+
 # Initialize I2C to be able to read the BME280
 i2c = I2C(0,sda=Pin(0), scl=Pin(1), freq=400000) 
 
-def connectMQTT():
+# Connects to the Home Assistant MQTT Broker
+def mqtt_connect():
     client = MQTTClient(client_id=b"python-mqtt-567",
                         server=b"homeassistant.local",
                         port=1883,
+                        keepalive=3600,
                         user=b"mqtt-user",
                         password=b"mqtt-user"
                         )
     client.connect()
     return client
 
+# Function to reboot the machine if the connection
+# cannot be established
+def reconnect():
+    sleep(5)
+    machine.reset()
 
-# Function to initialize the wifi connection
-def init_wifi():   
-    
-    global wlan
-    
-    # Connect to WLAN
-    wlan = network.WLAN(network.STA_IF)
-    network.hostname(HOSTNAME)
-    wlan.active(True)
-    wlan.connect(ssid, password)
-
-# Function to connect to the wifi
-def connect_to_wifi():
-    
-    global wlan
-    
-    # Wait for the wifi connetion
-    while wlan.isconnected() == False:
-        if DEBUG:
-            print('Waiting for connection...')
-        led.value(True)
-        sleep(.25)
-        led.value(False)
-        sleep(.25)
-    ip = wlan.ifconfig()[0]
-    return ip
-
-# Function to start a web server
+# Function to get the sensor data and publish it to topics
 def publish_topics():
   
-
-                
         # Turn on the LED to show the program is running
         led.value(True)
                 
@@ -102,19 +91,26 @@ def publish_topics():
         client.publish(topic_outside_temp,str(sensor_dictionary["Temperature_C"]))
         client.publish(topic_outside_humidity,str(sensor_dictionary["Humidity_%"]))
         
-
-# Main program
+# Try to connect to the MQTT broker
 try:
     
-    init_wifi()
-    client = connectMQTT()
-    ip=connect_to_wifi()
+    client = mqtt_connect()
+
+# If not possible to connect, reboot
+except OSError as e:
+    reconnect()
+
+# Try to publish data
+try:
     
+    # Publish topics
     while True:
        publish_topics()
-       sleep(3)
-    
-except KeyboardInterrupt:
-    machine.reset()
+       sleep(PUBLISH_FREQ)
+
+# If Publish fails, reboot
+except OSError as e:
+    reconnect()
+
 
   

@@ -7,6 +7,8 @@ This is a random collection of links and useful documentation collected while de
 |iBeacon|https://kvurd.com/blog/tilt-hydrometer-ibeacon-data-format/|
 |RPI Z2W Update Error|https://forums.raspberrypi.com/viewtopic.php?t=359240|
 |RPI Pico Firmware|https://micropython.org/download/RPI_PICO/|
+|RPI Pico Python|https://www.raspberrypi.com/documentation/microcontrollers/micropython.html#drag-and-drop-micropython|
+|Tom's Hardware HowTo RPI Pico MQTT|https://www.tomshardware.com/how-to/send-and-receive-data-raspberry-pi-pico-w-mqtt|
 
 ## Enable 1 Wire Interface on RPI
 To enable the one-wire interface you need to add the following line to /boot/firmware/config.txt, before rebooting your Pi:
