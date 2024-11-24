@@ -15,3 +15,6 @@ The monitor is implemented in a Raspberry Pi Zero 2 W and Raspberry Pi Pico W, w
 
 ## Schematic
 ![Schematic](/documentation/BreweryMonitor.drawio.svg)
+
+## Schematic
+![Schematic](/documentation/BreweryMonitor-rpi-pico-w.drawio.svg)
