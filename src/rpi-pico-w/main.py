@@ -9,12 +9,11 @@ from umqtt.simple import MQTTClient
 import bme280
 from machine import Pin,I2C
 
-DEBUG = False
+DEBUG = True
 
 # Topics to publish
-topic_inside_temp = "/home/inside/temperature"
-topic_outside_temp = "/home/outside/temperature"
-topic_outside_humidity = "/home/outside/humidity"
+topic_inside_temp_bedroom = "/home/inside/temperature_bedroom"
+topic_inside_humidity_bedroom = "/home/inside/humidity_bedroom"
 
 # Freq to publish the topics
 PUBLISH_FREQ = 15
@@ -24,7 +23,7 @@ ssid = 'FRITZ!Box 6660 Cable LQ'
 password = '59231105902184626702'
 
 # RPI Pico network settings
-HOSTNAME = 'ashinkl-rpipw'
+HOSTNAME = 'ashinkl-rpipw-2'  # Change for each new sensor
 PORT = 12345
 
 # Configure LED on the board as an output
@@ -44,7 +43,7 @@ i2c = I2C(0,sda=Pin(0), scl=Pin(1), freq=400000)
 
 # Connects to the Home Assistant MQTT Broker
 def mqtt_connect():
-    client = MQTTClient(client_id=b"python-mqtt-567",
+    client = MQTTClient(client_id=b"python-mqtt-568",  # Change for each new sensor
                         server=b"homeassistant.local",
                         port=1883,
                         keepalive=3600,
@@ -88,12 +87,14 @@ def publish_topics():
         sensor_dictionary["Humidity_%"] = float(bme.values[2].split("%")[0].strip())
         
         # Send the string to the socket and close it
-        client.publish(topic_outside_temp,str(sensor_dictionary["Temperature_C"]))
-        client.publish(topic_outside_humidity,str(sensor_dictionary["Humidity_%"]))
+        client.publish(topic_inside_temp_bedroom,str(sensor_dictionary["Temperature_C"]))
+        client.publish(topic_inside_humidity_bedroom,str(sensor_dictionary["Humidity_%"]))
         
 # Try to connect to the MQTT broker
 try:
     
+    if DEBUG:
+        print("try to connect to mqtt client")
     client = mqtt_connect()
 
 # If not possible to connect, reboot
