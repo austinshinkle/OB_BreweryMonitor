@@ -11,7 +11,7 @@ Each fermentation chamber supports a 40L Spiedel Fermenter and has a temperature
 The kegerator fits two corny kegs with picnic taps. The kegerator has an interior temperature sensor and a load cell under each keg connected to the RPI Zero 2 W to measure the amount of beer remaining in each keg.
 
 ### Monitoring System
-The monitor is implemented in a Raspberry Pi Zero 2 W and hosts a socket that collects the data and serializes it into a stream which provides the sensor data. The visualization must be completed separately by connecting to the socket provided by the monitor.
+The monitor is implemented in a Raspberry Pi Zero 2 W and Raspberry Pi Pico W, which publish MQTT topics. This requires an external MQTT broker. The MQTT broker and visualization are currently completed using Home Assistant <https://www.home-assistant.io/>. Home Assistant is running on a Raspberry Pi 4B in the local network.
 
 ## Schematic
 ![Schematic](/documentation/BreweryMonitor.drawio.svg)
