@@ -22,6 +22,8 @@ The configuratin.yaml file in Home Assistant must be updated to connect the MQTT
 - /home/outside/humidity
 - /home/inside/temperature_bedroom
 - /home/inside/humidity_bedroom
+- /home/inside/temperature_living_room
+- /home/inside/humidity_living_room
 
 ### Example configuration.yaml
 ```
